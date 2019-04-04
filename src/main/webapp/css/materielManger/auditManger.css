@@ -1,0 +1,42 @@
+.auditicons_0{
+	/**政治审核**/
+	background-image: url('../../images/icons/review_political.png')!important;  
+}
+.auditicons_1{
+	/**法律审核**/
+	background-image: url('../../images/icons/review_law.png')!important;  
+}
+.auditicons_2{
+	/**规则审核**/
+	background-image: url('../../images/icons/review_rule.png')!important;  
+}
+
+
+.auditicons_check{
+	/**查看**/
+	background-image: url('../../images/icons/common_check.png')!important;  
+}
+.auditicons_add{
+	/**新增**/
+	background-image: url('../../images/icons/common_add.png')!important;  
+}
+.auditicons_edit{
+	/**编辑**/
+	background-image: url('../../images/icons/common_edit.png')!important;  
+}
+.auditicons_del{
+	/**删除**/
+	background-image: url('../../images/icons/common_del.png')!important;  
+}
+.auditicons_refresh{
+	/**刷新**/
+	background-image: url('../../images/icons/common_refresh.png')!important;  
+}
+.refresh{
+	background-color:red;
+}
+.blue{
+	background-color:blue;
+}
+.button_color{ background-color:#989f5a;}
+

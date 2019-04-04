@@ -1,0 +1,11 @@
+.bgimage{
+	background:url('http://202.107.225.48:8081/resource/sea.jpg') no-repeat center fixed;
+}
+.wificolor{
+	color:#A37B48;
+}
+.btn-style{
+	background-color: #A37B48;
+   border-color: #A37B48;
+   color: #FFFFFF;
+}

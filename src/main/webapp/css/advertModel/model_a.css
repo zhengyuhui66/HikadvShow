@@ -1,0 +1,11 @@
+.bgimage{
+	background:url('http://202.107.225.48:8081/resource/sky.jpg') no-repeat center fixed;
+}
+.wificolor{
+	color: rgb(26, 179, 148);
+}
+.btn-style{
+	background-color: #1ab394;
+   border-color: #1ab394;
+   color: #FFFFFF;
+}

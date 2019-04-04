@@ -1,0 +1,11 @@
+&2&V2.0Beta&测试更新&http://10.10.4.92:7080/Hikadv/pages/test.apk&hikadv_v2.apk
+
+
+/**
+*参数解释
+**/
+ updateInfo.setVersion(Integer.valueOf(result[1]));//版本号
+ updateInfo.setVersionName(result[2]);//版本名称
+ updateInfo.setDescription(result[3]);//更新说明
+ updateInfo.setUrl(result[4]);//更新对应Apk下载地址
+ updateInfo.setApkName(result[5]);//下载到客户端中的Apk命名

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:p="http://www.springframework.org/schema/p" 
+xmlns:context="http://www.springframework.org/schema/context"
+xmlns:aop="http://www.springframework.org/schema/aop"
+xmlns:tx="http://www.springframework.org/schema/tx"
+xmlns:task="http://www.springframework.org/schema/task"
+xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+<context:annotation-config />
+<context:component-scan base-package="com.hik.*">
+	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+</context:component-scan>
+<!-- <aop:aspectj-autoproxy proxy-target-class="true"/> -->
+<jpa:repositories base-package="com.hik.dao" transaction-manager-ref="transactionManager" entity-manager-factory-ref="entityManagerFactory">
+</jpa:repositories>
+<bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">  
+       <property name="locations">  
+           <list>
+               <value>classpath:configuration.properties</value>  
+               <value>classpath:jdbc.properties</value>
+               <value>classpath:redis.properties</value>
+           </list>
+       </property>
+    </bean>
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">  
+        <property name="properties" ref="configProperties" />  
+    </bean>  
+    
+<bean id="entityManagerFactory"
+     class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan" value="com.hik.app.entity"/>
+<!-- JPA提供者 -->
+        <property name="persistenceProvider">
+            <bean class="org.hibernate.ejb.HibernatePersistence"/>
+        </property>
+<!--         实现商 -->
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="generateDdl" value="false"/>
+          		 <property name="database" value="${${database}.JpaVendorAdapter}" />
+                <property name="showSql" value="false"/>
+            </bean>
+        </property>
+        <property name="jpaDialect">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect"/>
+        </property>
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.query.substitutions" value="true 1, false 0"/>
+                <entry key="hibernate.default_batch_fetch_size" value="16"/>
+                <entry key="hibernate.max_fetch_depth" value="2"/>
+                <entry key="hibernate.generate_statistics" value="false"/>
+                <entry key="hibernate.bytecode.use_reflection_optimizer" value="true"/>
+                <entry key="hibernate.cache.use_second_level_cache" value="false"/>
+                <entry key="hibernate.cache.use_query_cache" value="false"/>
+            </map>
+        </property>
+    </bean>
+<!--事务管理器配置-->
+<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory"/>
+</bean>
+<!-- 开启注解事务 只对当前配置文件有效 -->
+<tx:annotation-driven transaction-manager="transactionManager"/>
+
+    
+        <!-- 属性文件位置 -->
+<!--  <context:property-placeholder location="classpath:jdbc.properties" /> -->
+<bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+	<property name="driverClassName" value="${${database}.driverClassName}" />
+	<property name="url"><value><![CDATA[${${database}.url}]]></value></property>
+	<property name="username"> <value><![CDATA[${${database}.username}]]></value></property>
+	<property name="password" value="${${database}.password}"/>
+	 <property name="maxActive">   
+               <value>200</value>   
+        </property>
+        <property name="maxIdle">   
+               <value>2</value>   
+        </property>   
+        <property name="maxWait">   
+               <value>120000</value>   
+        </property>
+            <!--initialSize: 初始化连接-->    
+  <property name="initialSize" value="100"/> 
+</bean>
+
+
+<!-- 配置Jdbc模板 -->
+<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+	<property name="dataSource" ref="dataSource"></property>
+</bean>
+<!-- =======================发送短信数据源======================================================================= -->
+<!-- <bean name="smsSource" class="org.apache.commons.dbcp.BasicDataSource"> -->
+<!-- 	<property name="driverClassName" value="${jdbc.driverClassName}" /> -->
+<!-- 	<property name="url"><value><![CDATA[${jdbc.url}]]></value></property> -->
+<!-- 	<property name="username"> <value><![CDATA[${jdbc.username}]]></value></property> -->
+<!-- 	<property name="password" value="${jdbc.password}"/> -->
+<!-- </bean> -->
+<!-- <bean id="smsDataSource" class="org.springframework.jdbc.core.JdbcTemplate"> -->
+<!-- 	<property name="dataSource" ref="smsSource"></property> -->
+<!-- </bean> -->
+
+<!--  <bean id="smsDatatransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">   -->
+<!--     <property name="dataSource" ref="smsSource"></property>        -->
+<!--   </bean>  -->
+  
+<!--  引入redis属性配置文件 -->
+<!--     <import resource="redis-context.xml"/> -->
+
+<!--     配置缓存 -->
+<!--     <bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager"> -->
+<!--         <constructor-arg ref="redisTemplate" /> -->
+<!--     </bean> -->
+<!--   =======================定时任务程序===================================== -->
+<task:executor id="executor" pool-size="5" />  
+<task:scheduler id="scheduler" pool-size="10" />  
+<task:annotation-driven executor="executor" scheduler="scheduler" />
+
+<bean class="com.hik.util.SpringBeanUtil"/>
+</beans> 
